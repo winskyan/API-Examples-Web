@@ -4,7 +4,7 @@ var client = AgoraRTC.createClient({
   codec: "vp8"
 });
 var localTracks = {
-  videoTrack: null,
+  // videoTrack: null,
   audioTrack: null
 };
 var remoteUsers = {};
@@ -37,12 +37,7 @@ $(() => {
 $("#host-join").click(function (e) {
   options.role = "host";
 });
-$("#lowLatency").click(function (e) {
-  options.role = "audience";
-  options.audienceLatency = 1;
-  $("#join-form").submit();
-});
-$("#ultraLowLatency").click(function (e) {
+$("#audience-join").click(function (e) {
   options.role = "audience";
   options.audienceLatency = 2;
   $("#join-form").submit();
@@ -52,10 +47,14 @@ $("#join-form").submit(async function (e) {
   $("#host-join").attr("disabled", true);
   $("#audience-join").attr("disabled", true);
   try {
-    options.channel = $("#channel").val();
-    options.uid = Number($("#uid").val());
-    options.appid = $("#appid").val();
-    options.token = $("#token").val();
+    // options.channel = $("#channel").val();
+    // options.uid = Number($("#uid").val());
+    // options.appid = $("#appid").val();
+    // options.token = $("#token").val();
+    options.channel = "qwert";
+    options.uid = 112;
+    options.appid = "4d4bf997732c4309911147503e91e338";
+    options.token = "0064d4bf997732c4309911147503e91e338IABJV/m0ZXxZS7Adj1OnwHQkfBpYt61DH5ql2BMl35zYBd0BBfCHAGLUIgAVuW0Fd127ZQQAAQB1XbtlAgB1XbtlAwB1XbtlBAB1Xbtl";
     await join();
     if (options.role === "host") {
       $("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
@@ -86,9 +85,10 @@ async function join() {
     client.on("user-published", handleUserPublished);
     client.on("user-unpublished", handleUserUnpublished);
   } else {
-    client.getListeners("user-published").includes(handleUserPublished) && client.off("user-published", handleUserPublished);
-    client.getListeners("user-unpublished").includes(handleUserUnpublished) && client.off("user-unpublished", handleUserUnublished);
     client.setClientRole(options.role);
+    // add event listener to play remote tracks when remote user publishs.
+    client.on("user-published", handleUserPublished);
+    client.on("user-unpublished", handleUserUnpublished);
   }
 
   // join the channel
@@ -100,13 +100,13 @@ async function join() {
         encoderConfig: "music_standard"
       });
     }
-    if (!localTracks.videoTrack) {
-      localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    }
+    // if (!localTracks.videoTrack) {
+    //   localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    // }
     // play local video track
-    localTracks.videoTrack.play("local-player");
-    $("#local-player-name").text(`localTrack(${options.uid})`);
-    $("#joined-setup").css("display", "flex");
+    // localTracks.videoTrack.play("local-player");
+    // $("#local-player-name").text(`localTrack(${options.uid})`);
+    // $("#joined-setup").css("display", "flex");
     // publish local tracks to channel
     await client.publish(Object.values(localTracks));
     console.log("publish success");
@@ -143,7 +143,7 @@ async function subscribe(user, mediaType) {
   if (mediaType === 'video') {
     const player = $(`
       <div id="player-wrapper-${uid}">
-        <p class="player-name">remoteUser(${uid})</p>
+      <!-- <p class="player-name">remoteUser(${uid})</p> -->
         <div id="player-${uid}" class="player"></div>
       </div>
     `);

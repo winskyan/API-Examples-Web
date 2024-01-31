@@ -44,9 +44,9 @@ input {
 
 #success-alert, #success-alert-with-token {
   display: none;
-}
+} */
 
-@media (max-width: 640px) {
+/* @media (max-width: 640px) {
   .player {
     width: 320px;
     height: 240px;
